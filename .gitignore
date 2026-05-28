@@ -1,3 +1,10 @@
 .DS_Store
 *.swp
 *.swo
+
+# Keep private — never push the learner profile to GitHub.
+learner_profile.md
+
+# Python
+__pycache__/
+*.pyc

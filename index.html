@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Study Tutorials</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <script src="https://cdn.jsdelivr.net/npm/marked@4/marked.min.js"></script>
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/styles/github-dark.min.css"
+  />
+  <script src="https://cdn.jsdelivr.net/gh/highlightjs/cdn-release@11/build/highlight.min.js"></script>
+
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --link: #58a6ff;
+      --accent: #d29922;
+      --code-bg: #1c2128;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.7;
+    }
+    .layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      min-height: 100vh;
+    }
+    aside.sidebar {
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      overflow-y: auto;
+      position: sticky;
+      top: 0;
+      max-height: 100vh;
+    }
+    .sidebar h1 {
+      font-size: 0.85rem;
+      margin: 0 0 16px 0;
+      color: var(--muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .nav-item {
+      display: block;
+      padding: 10px 12px;
+      margin: 6px 0;
+      border-radius: 6px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 0.95rem;
+      transition: background 0.1s, color 0.1s;
+    }
+    .nav-item:hover { background: rgba(255, 255, 255, 0.05); }
+    .nav-item.active {
+      background: rgba(88, 166, 255, 0.15);
+      color: var(--link);
+    }
+    .nav-item .date {
+      display: block;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-top: 2px;
+      font-variant-numeric: tabular-nums;
+    }
+    main {
+      padding: 48px 64px;
+      max-width: 920px;
+      width: 100%;
+      overflow-x: hidden;
+    }
+    main h1 {
+      font-size: 2.2rem;
+      margin-top: 0;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 12px;
+    }
+    main h2 {
+      font-size: 1.55rem;
+      margin-top: 2.6rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+    main h3 { font-size: 1.25rem; margin-top: 2rem; }
+    main h4 { font-size: 1.05rem; margin-top: 1.6rem; }
+    main a { color: var(--link); text-decoration: none; }
+    main a:hover { text-decoration: underline; }
+    main p, main li { font-size: 1rem; }
+    main blockquote {
+      border-left: 4px solid var(--accent);
+      padding: 8px 16px;
+      margin: 16px 0;
+      background: rgba(210, 153, 34, 0.08);
+      color: var(--text);
+    }
+    main code {
+      background: var(--code-bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.9em;
+      font-family: "SF Mono", Menlo, Consolas, "Courier New", monospace;
+    }
+    main pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+    main pre code {
+      background: none;
+      padding: 0;
+      font-size: 0.88rem;
+    }
+    main table {
+      border-collapse: collapse;
+      margin: 16px 0;
+      width: 100%;
+    }
+    main th, main td {
+      border: 1px solid var(--border);
+      padding: 8px 12px;
+      text-align: left;
+    }
+    main th { background: var(--panel); }
+    main hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 32px 0;
+    }
+    .meta {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      margin-bottom: 32px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .meta strong { color: var(--text); }
+    .placeholder {
+      color: var(--muted);
+      font-size: 1.2rem;
+      text-align: center;
+      margin-top: 80px;
+    }
+    @media (max-width: 720px) {
+      .layout { grid-template-columns: 1fr; }
+      aside.sidebar { position: static; max-height: none; }
+      main { padding: 24px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <aside class="sidebar">
+      <h1>📚 Tutorials</h1>
+      <nav id="nav"></nav>
+    </aside>
+    <main id="content">
+      <p class="placeholder">Pick a tutorial from the sidebar.</p>
+    </main>
+  </div>
+
+  <script>
+    const navEl = document.getElementById("nav");
+    const contentEl = document.getElementById("content");
+
+    marked.setOptions({
+      gfm: true,
+      breaks: false,
+      highlight(code, lang) {
+        try {
+          if (lang && hljs.getLanguage(lang)) {
+            return hljs.highlight(code, { language: lang }).value;
+          }
+          return hljs.highlightAuto(code).value;
+        } catch (e) {
+          return code;
+        }
+      },
+    });
+
+    function escapeHtml(s) {
+      return String(s)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    async function loadList() {
+      const res = await fetch("./manifest.json", { cache: "no-store" });
+      if (!res.ok) {
+        navEl.innerHTML =
+          '<p style="color: var(--muted); font-size: 0.85rem;">Could not load manifest.json. Run <code>python3 server.py --build</code> to generate it.</p>';
+        return;
+      }
+      const items = await res.json();
+      navEl.innerHTML = "";
+      for (const item of items) {
+        const a = document.createElement("a");
+        a.className = "nav-item";
+        a.href = "#" + item.filename;
+        a.dataset.filename = item.filename;
+        a.innerHTML =
+          escapeHtml(item.title) +
+          (item.date ? `<span class="date">${escapeHtml(item.date)}</span>` : "");
+        navEl.appendChild(a);
+      }
+    }
+
+    function parseFrontmatter(md) {
+      const m = md.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+      if (!m) return { fm: {}, body: md };
+      const fm = {};
+      for (const line of m[1].split("\n")) {
+        const i = line.indexOf(":");
+        if (i === -1) continue;
+        const k = line.slice(0, i).trim();
+        let v = line.slice(i + 1).trim();
+        if (v.startsWith("[") && v.endsWith("]")) {
+          v = v
+            .slice(1, -1)
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean);
+        }
+        fm[k] = v;
+      }
+      return { fm, body: m[2] };
+    }
+
+    function renderMeta(fm) {
+      if (!fm || Object.keys(fm).length === 0) return "";
+      const bits = [];
+      if (fm.created) bits.push(`<strong>Created:</strong> ${escapeHtml(fm.created)}`);
+      if (fm.concepts) {
+        const concepts = Array.isArray(fm.concepts)
+          ? fm.concepts.join(", ")
+          : fm.concepts;
+        bits.push(`<strong>Concepts:</strong> ${escapeHtml(concepts)}`);
+      }
+      if (fm.understanding_score && fm.understanding_score !== "null") {
+        bits.push(`<strong>Score:</strong> ${escapeHtml(fm.understanding_score)}/10`);
+      }
+      if (fm.last_quizzed && fm.last_quizzed !== "null") {
+        bits.push(`<strong>Last quizzed:</strong> ${escapeHtml(fm.last_quizzed)}`);
+      }
+      return bits.length ? `<div class="meta">${bits.join(" · ")}</div>` : "";
+    }
+
+    async function loadTutorial(filename) {
+      if (!filename) {
+        contentEl.innerHTML =
+          '<p class="placeholder">Pick a tutorial from the sidebar.</p>';
+        return;
+      }
+      const res = await fetch("./" + encodeURIComponent(filename), { cache: "no-store" });
+      if (!res.ok) {
+        contentEl.innerHTML = `<p class="placeholder">Could not load ${escapeHtml(filename)}</p>`;
+        return;
+      }
+      const md = await res.text();
+      const { fm, body } = parseFrontmatter(md);
+      const html = renderMeta(fm) + marked.parse(body);
+      contentEl.innerHTML = html;
+      window.scrollTo(0, 0);
+      for (const link of navEl.querySelectorAll(".nav-item")) {
+        link.classList.toggle("active", link.dataset.filename === filename);
+      }
+    }
+
+    function currentFile() {
+      return decodeURIComponent(location.hash.slice(1));
+    }
+
+    window.addEventListener("hashchange", () => loadTutorial(currentFile()));
+
+    (async () => {
+      await loadList();
+      const f = currentFile();
+      if (f) loadTutorial(f);
+    })();
+  </script>
+</body>
+</html>

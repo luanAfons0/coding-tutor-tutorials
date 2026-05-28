@@ -1,0 +1,27 @@
+[
+  {
+    "filename": "2026-05-27-build-a-dynamic-array-from-scratch.md",
+    "title": "Build a Dynamic Array From Scratch",
+    "date": "2026-05-27"
+  },
+  {
+    "filename": "2026-05-27-pointers-and-the-memory-model.md",
+    "title": "Pointers and the Memory Model",
+    "date": "2026-05-27"
+  },
+  {
+    "filename": "2026-05-27-the-heap-malloc-free-and-ownership.md",
+    "title": "The Heap: malloc, free, and Ownership",
+    "date": "2026-05-27"
+  },
+  {
+    "filename": "2026-05-28-big-o-notation-a-beginners-primer.md",
+    "title": "Big O Notation \u2014 A Beginner's Primer",
+    "date": "2026-05-28"
+  },
+  {
+    "filename": "2026-05-28-build-a-singly-linked-list-from-scratch.md",
+    "title": "Build a Singly Linked List From Scratch",
+    "date": "2026-05-28"
+  }
+]
