@@ -48,8 +48,18 @@
       ]
     }
   ],
-  "about": {
-    "path": "about.md",
-    "title": "How am I"
-  }
+  "pages": [
+    {
+      "path": "pages/1-who-am-i.md",
+      "title": "Who am I"
+    },
+    {
+      "path": "pages/2-the-project.md",
+      "title": "The Project"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "title": "Contributing"
+    }
+  ]
 }

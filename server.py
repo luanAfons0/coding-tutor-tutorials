@@ -141,10 +141,25 @@ def build_manifest() -> dict:
 
     manifest: dict = {"sections": sections}
 
-    about = SCRIPT_DIR / "about.md"
-    if about.exists():
-        title, _, _ = extract_meta(about)
-        manifest["about"] = {"path": "about.md", "title": title or "About"}
+    # Standalone pages pinned at the bottom of the sidebar. Files in pages/ are
+    # ordered by their numeric filename prefix (1-..., 2-...); CONTRIBUTING.md
+    # (kept at the repo root for GitHub) is appended last.
+    pages: list[dict] = []
+    pages_dir = SCRIPT_DIR / "pages"
+    if pages_dir.is_dir():
+        for md in sorted(pages_dir.glob("*.md")):
+            if md.name in SKIP_FILES:
+                continue
+            title, _, _ = extract_meta(md)
+            pages.append({"path": md.relative_to(SCRIPT_DIR).as_posix(), "title": title})
+
+    contributing = SCRIPT_DIR / "CONTRIBUTING.md"
+    if contributing.exists():
+        title, _, _ = extract_meta(contributing)
+        pages.append({"path": "CONTRIBUTING.md", "title": title or "Contributing"})
+
+    if pages:
+        manifest["pages"] = pages
 
     MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest

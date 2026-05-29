@@ -251,6 +251,18 @@
       const sections = manifestData.sections || [];
       navEl.innerHTML = "";
 
+      // Standalone guide pages (Who am I, The Project, Contributing) come first,
+      // above the course accordions, as the site's orientation.
+      const pages = manifestData.pages || [];
+      if (pages.length) {
+        for (const page of pages) {
+          const link = makeNavItem(page);
+          link.classList.add("nav-about");
+          navEl.appendChild(link);
+        }
+        navEl.appendChild(document.createElement("hr")).className = "nav-divider";
+      }
+
       for (const section of sections) {
         const wrap = document.createElement("div");
         wrap.className = "nav-section";
@@ -270,14 +282,6 @@
         }
         wrap.appendChild(body);
         navEl.appendChild(wrap);
-      }
-
-      // "How am I" pinned at the bottom, outside the accordions.
-      if (manifestData.about) {
-        navEl.appendChild(document.createElement("hr")).className = "nav-divider";
-        const about = makeNavItem(manifestData.about);
-        about.classList.add("nav-about");
-        navEl.appendChild(about);
       }
 
       // Default: collapse all, open the first real course (not Extras).
@@ -393,7 +397,12 @@
     (async () => {
       await loadList();
       const f = currentFile();
-      if (f) loadTutorial(f);
+      if (f) {
+        loadTutorial(f);
+      } else if (manifestData && manifestData.pages && manifestData.pages.length) {
+        // Land on the first guide page (Who am I) instead of an empty pane.
+        loadTutorial(manifestData.pages[0].path);
+      }
     })();
   </script>
 </body>
