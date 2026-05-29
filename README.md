@@ -53,15 +53,17 @@ Your tutorials will be live at `https://<username>.github.io/<repo>/`.
 
 ### Layout
 
-Content lives in two places, plus an "about" page:
-
 ```
 coding-tutor-tutorials/
 ├── index.html          # the viewer
 ├── server.py           # builds manifest.json + serves locally
 ├── manifest.json       # auto-generated, sectioned index (drives the sidebar)
-├── about.md            # the "How am I" page (no frontmatter)
 ├── learner_profile.md  # private
+├── CONTRIBUTING.md     # how to contribute a tutorial
+├── LICENSE.md          # MIT
+├── pages/              # standalone guide pages (no frontmatter)
+│   ├── 1-who-am-i.md
+│   └── 2-the-project.md
 ├── extras/             # complementary material (theory, references)
 │   └── YYYY-MM-DD-topic.md
 └── courses/            # the curriculum, one folder per subject
@@ -69,13 +71,18 @@ coding-tutor-tutorials/
         └── YYYY-MM-DD-topic.md
 ```
 
-The sidebar renders one collapsible **accordion** per section:
+The sidebar is laid out top-to-bottom as:
 
-- **Extras** — everything in `extras/` (complementary content like Big O notation).
-- **One section per subject** — each folder under `courses/`, titled by the
-  folder name prettified (`data-structures-and-algorithms` → "Data Structures
-  and Algorithms").
-- **How am I** — a pinned link at the bottom that loads `about.md`.
+- **Guide pages** (from `pages/`, then `CONTRIBUTING.md`) at the very top — the
+  site's orientation. They render in numeric filename order (`1-…`, `2-…`).
+- A divider, then one collapsible **accordion per section**:
+  - **Extras** — everything in `extras/` (complementary content like Big O notation).
+  - **One section per subject** — each folder under `courses/`, titled by the
+    folder name prettified (`data-structures-and-algorithms` → "Data Structures
+    and Algorithms").
+
+The site lands on the first guide page (Who am I) when opened without a specific
+tutorial selected.
 
 Every entry in `manifest.json` carries a `path` relative to this directory
 (e.g. `courses/data-structures-and-algorithms/2026-...md`), so the static
@@ -98,8 +105,9 @@ back to date, then title, and sort after the ordered ones.
 |------|---------|
 | `index.html` | The viewer (accordion sidebar by section + rendered markdown). |
 | `server.py` | Rebuilds `manifest.json` (walks `extras/` + `courses/`) and optionally serves locally. |
-| `manifest.json` | Auto-generated. `{ sections: [{id, title, items:[{path, title, date, order}]}], about }`. |
-| `about.md` | The "How am I" page — about the developer and the project. |
+| `manifest.json` | Auto-generated. `{ sections: [{id, title, items:[{path, title, date, order}]}], pages: [{path, title}] }`. |
+| `pages/*.md` | Standalone guide pages (Who am I, The Project) — no frontmatter, shown at the top of the sidebar. |
+| `CONTRIBUTING.md` | How to contribute a tutorial; also linked at the top of the sidebar. |
 | `extras/*.md` | Complementary material (theory, references). |
 | `courses/<subject>/*.md` | The curriculum tutorials, grouped by subject. |
 | `learner_profile.md` | **Private.** Listed in `.gitignore`. |

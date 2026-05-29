@@ -17,16 +17,22 @@ keeping the library tidy and the viewer working.
 index.html          # the viewer (vanilla JS, CDN deps only — no build step)
 server.py           # rebuilds manifest.json + serves locally
 manifest.json       # GENERATED — never hand-edit
-about.md            # the "How am I" page (no frontmatter)
+pages/              # standalone guide pages (no frontmatter): 1-who-am-i, 2-the-project
+CONTRIBUTING.md     # how to contribute a tutorial
+LICENSE.md          # MIT
 learner_profile.md  # PRIVATE — gitignored, never commit
 extras/             # complementary material (theory, references)
 courses/<subject>/  # the curriculum, one folder per subject
 ```
 
-The sidebar renders one collapsible **accordion per section**: `Extras` (from
-`extras/`), then one section per folder under `courses/`, then a pinned
-`How am I` link. Section titles are the folder name prettified
-(`data-structures-and-algorithms` → "Data Structures and Algorithms").
+The sidebar, top to bottom: **guide pages** first (the `pages/*.md` files in
+numeric-prefix order, then `CONTRIBUTING.md`), a divider, then one collapsible
+**accordion per section** — `Extras` (from `extras/`), then one per folder under
+`courses/`. Section titles are the folder name prettified
+(`data-structures-and-algorithms` → "Data Structures and Algorithms"). Guide
+pages carry **no frontmatter** (so the `coding-tutor` skill ignores them); their
+order comes from the numeric filename prefix, and the site lands on the first
+one (Who am I).
 
 ## How to work here
 
