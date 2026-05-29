@@ -51,12 +51,55 @@ Your tutorials will be live at `https://<username>.github.io/<repo>/`.
 
 > Tip: run `python3 server.py --build` whenever you add or rename a `.md` file so the sidebar list stays in sync before you push.
 
+### Layout
+
+Content lives in two places, plus an "about" page:
+
+```
+coding-tutor-tutorials/
+├── index.html          # the viewer
+├── server.py           # builds manifest.json + serves locally
+├── manifest.json       # auto-generated, sectioned index (drives the sidebar)
+├── about.md            # the "How am I" page (no frontmatter)
+├── learner_profile.md  # private
+├── extras/             # complementary material (theory, references)
+│   └── YYYY-MM-DD-topic.md
+└── courses/            # the curriculum, one folder per subject
+    └── data-structures-and-algorithms/
+        └── YYYY-MM-DD-topic.md
+```
+
+The sidebar renders one collapsible **accordion** per section:
+
+- **Extras** — everything in `extras/` (complementary content like Big O notation).
+- **One section per subject** — each folder under `courses/`, titled by the
+  folder name prettified (`data-structures-and-algorithms` → "Data Structures
+  and Algorithms").
+- **How am I** — a pinned link at the bottom that loads `about.md`.
+
+Every entry in `manifest.json` carries a `path` relative to this directory
+(e.g. `courses/data-structures-and-algorithms/2026-...md`), so the static
+viewer fetches each file directly — it works the same locally and on any
+static host.
+
+**To add content:** drop a `.md` file into `extras/` or into a subject folder
+under `courses/` (create a new folder, e.g. `courses/javascript/`, to start a
+new subject), then run `python3 server.py --build`. The new section/entry
+appears automatically — no edits to `index.html` needed.
+
+**Reading order:** within a section, tutorials are sorted by the `order:` field
+in their frontmatter (`order: 1`, `order: 2`, …) — the intended sequence to read
+them in, independent of filename or date. Tutorials without an `order:` fall
+back to date, then title, and sort after the ordered ones.
+
 ### Files
 
 | File | Purpose |
 |------|---------|
-| `index.html` | The viewer (sidebar + rendered markdown). |
-| `server.py` | Rebuilds `manifest.json` and optionally serves locally. |
-| `manifest.json` | Auto-generated. Lists every tutorial for the sidebar. |
-| `*.md` | The tutorials. |
-| `learner_profile.md` | **Private.** Listed in `.gitignore`, won't be pushed. |
+| `index.html` | The viewer (accordion sidebar by section + rendered markdown). |
+| `server.py` | Rebuilds `manifest.json` (walks `extras/` + `courses/`) and optionally serves locally. |
+| `manifest.json` | Auto-generated. `{ sections: [{id, title, items:[{path, title, date, order}]}], about }`. |
+| `about.md` | The "How am I" page — about the developer and the project. |
+| `extras/*.md` | Complementary material (theory, references). |
+| `courses/<subject>/*.md` | The curriculum tutorials, grouped by subject. |
+| `learner_profile.md` | **Private.** Listed in `.gitignore`. |
