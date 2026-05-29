@@ -24,16 +24,34 @@ import re
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
+COURSES_DIR = SCRIPT_DIR / "courses"
 MANIFEST = SCRIPT_DIR / "manifest.json"
 PORT = 8765
 SKIP_FILES = {"learner_profile.md", "MEMORY.md", "README.md"}
 
+# Small words kept lowercase when prettifying a subject folder name.
+_SMALL_WORDS = {"and", "or", "of", "the", "to", "a", "an", "in", "on", "for"}
 
-def extract_title_and_date(md_path: Path) -> tuple[str, str]:
-    """Return (title, date) for a tutorial markdown file.
+
+def prettify_subject(slug: str) -> str:
+    """Turn a folder slug like 'data-structures-and-algorithms' into a title."""
+    words = slug.replace("_", "-").split("-")
+    out = []
+    for i, w in enumerate(words):
+        if i != 0 and w in _SMALL_WORDS:
+            out.append(w)
+        else:
+            out.append(w.capitalize())
+    return " ".join(out)
+
+
+def extract_meta(md_path: Path) -> tuple[str, str, int | None]:
+    """Return (title, date, order) for a tutorial markdown file.
 
     Date comes from a leading YYYY-MM-DD in the filename.
     Title is the first H1 in the body, with a filename-derived fallback.
+    Order is the `order:` frontmatter field (the intended reading position),
+    or None if absent.
     """
     date = ""
     m = re.match(r"(\d{4}-\d{2}-\d{2})-(.+)", md_path.stem)
@@ -44,6 +62,7 @@ def extract_title_and_date(md_path: Path) -> tuple[str, str]:
         fallback_title = md_path.stem.replace("-", " ").title()
 
     title = fallback_title
+    order: int | None = None
     try:
         in_frontmatter = False
         with md_path.open("r", encoding="utf-8") as f:
@@ -52,23 +71,83 @@ def extract_title_and_date(md_path: Path) -> tuple[str, str]:
                 if stripped == "---":
                     in_frontmatter = not in_frontmatter
                     continue
+                if in_frontmatter and stripped.startswith("order:"):
+                    try:
+                        order = int(stripped.split(":", 1)[1].strip())
+                    except ValueError:
+                        pass
                 if not in_frontmatter and stripped.startswith("# "):
                     title = stripped[2:].strip()
                     break
     except OSError:
         pass
-    return title, date
+    return title, date, order
 
 
-def build_manifest() -> list[dict]:
+def collect_items(dir_path: Path) -> list[dict]:
+    """Collect tutorial entries from a directory (recursively).
+
+    Each `path` is relative to this directory so the static viewer can fetch
+    it directly (e.g. "courses/data-structures-and-algorithms/2026-...md").
+    """
     items: list[dict] = []
-    for md in sorted(SCRIPT_DIR.glob("*.md")):
+    for md in sorted(dir_path.rglob("*.md")):
         if md.name in SKIP_FILES:
             continue
-        title, date = extract_title_and_date(md)
-        items.append({"filename": md.name, "title": title, "date": date})
-    MANIFEST.write_text(json.dumps(items, indent=2) + "\n", encoding="utf-8")
+        title, date, order = extract_meta(md)
+        items.append({
+            "filename": md.name,
+            "path": md.relative_to(SCRIPT_DIR).as_posix(),
+            "title": title,
+            "date": date,
+            "order": order,
+        })
+    # Intended reading order first (explicit `order:`); fall back to date/title
+    # for any tutorial that hasn't been given one yet (sentinel sends them last).
+    items.sort(key=lambda it: (it["order"] if it["order"] is not None else 10**9,
+                               it["date"], it["title"]))
     return items
+
+
+def build_manifest() -> dict:
+    """Build a sectioned manifest the viewer renders as accordions.
+
+    Shape:
+        {
+          "sections": [ { "id", "title", "items": [...] }, ... ],
+          "about": { "path": "about.md", "title": "..." }   # optional
+        }
+
+    Sections, in order: "Extras" (complementary content under extras/), then
+    one section per subject folder under courses/.
+    """
+    sections: list[dict] = []
+
+    extras_dir = SCRIPT_DIR / "extras"
+    if extras_dir.is_dir():
+        items = collect_items(extras_dir)
+        if items:
+            sections.append({"id": "extras", "title": "Extras", "items": items})
+
+    if COURSES_DIR.is_dir():
+        for subject_dir in sorted(p for p in COURSES_DIR.iterdir() if p.is_dir()):
+            items = collect_items(subject_dir)
+            if items:
+                sections.append({
+                    "id": subject_dir.name,
+                    "title": prettify_subject(subject_dir.name),
+                    "items": items,
+                })
+
+    manifest: dict = {"sections": sections}
+
+    about = SCRIPT_DIR / "about.md"
+    if about.exists():
+        title, _, _ = extract_meta(about)
+        manifest["about"] = {"path": "about.md", "title": title or "About"}
+
+    MANIFEST.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    return manifest
 
 
 def serve() -> None:
@@ -94,8 +173,9 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    items = build_manifest()
-    print(f"✓ manifest.json updated ({len(items)} tutorials)")
+    manifest = build_manifest()
+    total = sum(len(s["items"]) for s in manifest["sections"])
+    print(f"✓ manifest.json updated ({total} tutorials, {len(manifest['sections'])} sections)")
 
     if args.build:
         return

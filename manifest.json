@@ -1,27 +1,55 @@
-[
-  {
-    "filename": "2026-05-27-build-a-dynamic-array-from-scratch.md",
-    "title": "Build a Dynamic Array From Scratch",
-    "date": "2026-05-27"
-  },
-  {
-    "filename": "2026-05-27-pointers-and-the-memory-model.md",
-    "title": "Pointers and the Memory Model",
-    "date": "2026-05-27"
-  },
-  {
-    "filename": "2026-05-27-the-heap-malloc-free-and-ownership.md",
-    "title": "The Heap: malloc, free, and Ownership",
-    "date": "2026-05-27"
-  },
-  {
-    "filename": "2026-05-28-big-o-notation-a-beginners-primer.md",
-    "title": "Big O Notation \u2014 A Beginner's Primer",
-    "date": "2026-05-28"
-  },
-  {
-    "filename": "2026-05-28-build-a-singly-linked-list-from-scratch.md",
-    "title": "Build a Singly Linked List From Scratch",
-    "date": "2026-05-28"
+{
+  "sections": [
+    {
+      "id": "extras",
+      "title": "Extras",
+      "items": [
+        {
+          "filename": "2026-05-28-big-o-notation-a-beginners-primer.md",
+          "path": "extras/2026-05-28-big-o-notation-a-beginners-primer.md",
+          "title": "Big O Notation \u2014 A Beginner's Primer",
+          "date": "2026-05-28",
+          "order": 1
+        }
+      ]
+    },
+    {
+      "id": "data-structures-and-algorithms",
+      "title": "Data Structures and Algorithms",
+      "items": [
+        {
+          "filename": "2026-05-27-pointers-and-the-memory-model.md",
+          "path": "courses/data-structures-and-algorithms/2026-05-27-pointers-and-the-memory-model.md",
+          "title": "Pointers and the Memory Model",
+          "date": "2026-05-27",
+          "order": 1
+        },
+        {
+          "filename": "2026-05-27-the-heap-malloc-free-and-ownership.md",
+          "path": "courses/data-structures-and-algorithms/2026-05-27-the-heap-malloc-free-and-ownership.md",
+          "title": "The Heap: malloc, free, and Ownership",
+          "date": "2026-05-27",
+          "order": 2
+        },
+        {
+          "filename": "2026-05-27-build-a-dynamic-array-from-scratch.md",
+          "path": "courses/data-structures-and-algorithms/2026-05-27-build-a-dynamic-array-from-scratch.md",
+          "title": "Build a Dynamic Array From Scratch",
+          "date": "2026-05-27",
+          "order": 3
+        },
+        {
+          "filename": "2026-05-28-build-a-singly-linked-list-from-scratch.md",
+          "path": "courses/data-structures-and-algorithms/2026-05-28-build-a-singly-linked-list-from-scratch.md",
+          "title": "Build a Singly Linked List From Scratch",
+          "date": "2026-05-28",
+          "order": 4
+        }
+      ]
+    }
+  ],
+  "about": {
+    "path": "about.md",
+    "title": "How am I"
   }
-]
+}
