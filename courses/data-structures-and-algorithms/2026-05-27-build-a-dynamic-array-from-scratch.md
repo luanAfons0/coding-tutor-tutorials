@@ -1,10 +1,11 @@
 ---
 concepts: dynamic_array,realloc,amortized_complexity,struct,data_structures
+order: 3
 source_repo: study
 description: First real data structure of Phase 0 — build a dynamic array (the thing TypeScript's `array` and C# `List<T>` secretly are) from scratch in C. Learn the data+size+capacity trick, the realloc API and its "may move" gotcha, the capacity-doubling strategy, and why amortized O(1) is real even though some pushes are expensive. Combines everything from Tutorials 1 and 2 into a single working tool.
 understanding_score: null
 last_quizzed: null
-prerequisites: [~/coding-tutor-tutorials/2026-05-27-pointers-and-the-memory-model.md, ~/coding-tutor-tutorials/2026-05-27-the-heap-malloc-free-and-ownership.md]
+prerequisites: [~/coding-tutor-tutorials/courses/data-structures-and-algorithms/2026-05-27-pointers-and-the-memory-model.md, ~/coding-tutor-tutorials/courses/data-structures-and-algorithms/2026-05-27-the-heap-malloc-free-and-ownership.md]
 created: 27-05-2026
 last_updated: 27-05-2026
 ---

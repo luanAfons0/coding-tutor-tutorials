@@ -1,10 +1,11 @@
 ---
 concepts: heap,malloc,free,ownership,memory_leaks,dangling_pointers
+order: 2
 source_repo: study
 description: The garbage-collector-to-manual-memory leap. How to allocate memory on the heap with malloc, hand it back with free, and the new question C forces you to answer — "who owns this memory and when does it die?" Covers the two classic bugs (leaks and dangling pointers) and introduces AddressSanitizer to catch them live. Builds directly on the pointers/stack/heap tutorial.
 understanding_score: null
 last_quizzed: null
-prerequisites: [~/coding-tutor-tutorials/2026-05-27-pointers-and-the-memory-model.md]
+prerequisites: [~/coding-tutor-tutorials/courses/data-structures-and-algorithms/2026-05-27-pointers-and-the-memory-model.md]
 created: 27-05-2026
 last_updated: 27-05-2026
 ---

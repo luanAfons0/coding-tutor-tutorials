@@ -1,5 +1,6 @@
 ---
 concepts: pointers,memory_model,stack,heap
+order: 1
 source_repo: study
 description: The foundation of low-level C. What a pointer really is (just a memory address), the two operators that work with them (& and *), and the two places your data lives — the stack and the heap. Bridges from the TypeScript reference model the learner already knows to C's explicit, manual memory model.
 understanding_score: null

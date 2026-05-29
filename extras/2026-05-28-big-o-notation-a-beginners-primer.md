@@ -1,10 +1,11 @@
 ---
 concepts: big_o,complexity,asymptotic_analysis,amortized_complexity
+order: 1
 source_repo: study
 description: A short, just-enough primer on Big O notation — the vocabulary used throughout DSA to talk about how an algorithm's cost grows with input size. Covers the intuition (shape of growth, not stopwatch time), the common growth classes (O(1), O(log n), O(n), O(n log n), O(n²)), why constants get dropped, and what "amortized" really means — all anchored in the dynamic array and linked list the learner has already built.
 understanding_score: null
 last_quizzed: null
-prerequisites: [~/coding-tutor-tutorials/2026-05-27-build-a-dynamic-array-from-scratch.md]
+prerequisites: [~/coding-tutor-tutorials/courses/data-structures-and-algorithms/2026-05-27-build-a-dynamic-array-from-scratch.md]
 created: 28-05-2026
 last_updated: 28-05-2026
 ---

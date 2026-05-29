@@ -1,10 +1,11 @@
 ---
 concepts: linked_list,nodes,pointer_chasing,recursive_structures,list_traversal,pointer_to_pointer
+order: 4
 source_repo: study
 description: Second build of Phase 0 — a singly linked list. Each node is its own heap allocation, threaded together with a `next` pointer. Introduces the pointer-to-pointer idiom (`Node**`), the "save-next-before-free" walking pattern, and the deep trade-off vs the dynamic array (fast prepend vs fast indexed access). Cements ownership thinking: many small allocations, one careful walk to free them all.
 understanding_score: null
 last_quizzed: null
-prerequisites: [~/coding-tutor-tutorials/2026-05-27-pointers-and-the-memory-model.md, ~/coding-tutor-tutorials/2026-05-27-the-heap-malloc-free-and-ownership.md, ~/coding-tutor-tutorials/2026-05-27-build-a-dynamic-array-from-scratch.md]
+prerequisites: [~/coding-tutor-tutorials/courses/data-structures-and-algorithms/2026-05-27-pointers-and-the-memory-model.md, ~/coding-tutor-tutorials/courses/data-structures-and-algorithms/2026-05-27-the-heap-malloc-free-and-ownership.md, ~/coding-tutor-tutorials/courses/data-structures-and-algorithms/2026-05-27-build-a-dynamic-array-from-scratch.md]
 created: 28-05-2026
 last_updated: 28-05-2026
 ---
