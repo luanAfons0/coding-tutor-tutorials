@@ -34,7 +34,7 @@
     }
     .layout {
       display: grid;
-      grid-template-columns: 300px 1fr;
+      grid-template-columns: 340px 1fr;
       min-height: 100vh;
     }
     aside.sidebar {
@@ -54,6 +54,42 @@
       text-transform: uppercase;
       letter-spacing: 0.08em;
     }
+    .nav-section { margin-bottom: 4px; }
+    .nav-section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      box-sizing: border-box;
+      cursor: pointer;
+      user-select: none;
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 10px 12px;
+      margin-top: 10px;
+      font-family: inherit;
+      text-align: left;
+      border-radius: 6px;
+    }
+    .nav-section-header:hover { background: rgba(255, 255, 255, 0.04); }
+    .nav-section-header .chev {
+      color: var(--muted);
+      font-size: 0.7rem;
+      transition: transform 0.15s ease;
+    }
+    .nav-section.collapsed .chev { transform: rotate(-90deg); }
+    .nav-section.collapsed .nav-section-body { display: none; }
+    .nav-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 16px 0 4px 0;
+    }
+    .nav-about { color: var(--muted); font-size: 0.9rem; }
     .nav-item {
       display: block;
       padding: 10px 12px;
@@ -78,7 +114,6 @@
     }
     main {
       padding: 48px 64px;
-      max-width: 920px;
       width: 100%;
       overflow-x: hidden;
     }
@@ -180,6 +215,7 @@
   <script>
     const navEl = document.getElementById("nav");
     const contentEl = document.getElementById("content");
+    let manifestData = null;
 
     marked.setOptions({
       gfm: true,
@@ -211,17 +247,80 @@
           '<p style="color: var(--muted); font-size: 0.85rem;">Could not load manifest.json. Run <code>python3 server.py --build</code> to generate it.</p>';
         return;
       }
-      const items = await res.json();
+      manifestData = await res.json();
+      const sections = manifestData.sections || [];
       navEl.innerHTML = "";
-      for (const item of items) {
-        const a = document.createElement("a");
-        a.className = "nav-item";
-        a.href = "#" + item.filename;
-        a.dataset.filename = item.filename;
-        a.innerHTML =
-          escapeHtml(item.title) +
-          (item.date ? `<span class="date">${escapeHtml(item.date)}</span>` : "");
-        navEl.appendChild(a);
+
+      for (const section of sections) {
+        const wrap = document.createElement("div");
+        wrap.className = "nav-section";
+        wrap.dataset.sectionId = section.id || "";
+
+        const header = document.createElement("button");
+        header.className = "nav-section-header";
+        header.innerHTML =
+          `<span>${escapeHtml(section.title)}</span><span class="chev">▾</span>`;
+        header.addEventListener("click", () => toggleSection(wrap));
+        wrap.appendChild(header);
+
+        const body = document.createElement("div");
+        body.className = "nav-section-body";
+        for (const item of section.items || []) {
+          body.appendChild(makeNavItem(item));
+        }
+        wrap.appendChild(body);
+        navEl.appendChild(wrap);
+      }
+
+      // "How am I" pinned at the bottom, outside the accordions.
+      if (manifestData.about) {
+        navEl.appendChild(document.createElement("hr")).className = "nav-divider";
+        const about = makeNavItem(manifestData.about);
+        about.classList.add("nav-about");
+        navEl.appendChild(about);
+      }
+
+      // Default: collapse all, open the first real course (not Extras).
+      const allSections = [...navEl.querySelectorAll(".nav-section")];
+      allSections.forEach((s) => s.classList.add("collapsed"));
+      const def =
+        allSections.find((s) => s.dataset.sectionId !== "extras") || allSections[0];
+      if (def) def.classList.remove("collapsed");
+    }
+
+    function makeNavItem(item) {
+      const key = item.path || item.filename;
+      const a = document.createElement("a");
+      a.className = "nav-item";
+      a.href = "#" + key;
+      a.dataset.filename = key;
+      a.innerHTML =
+        escapeHtml(item.title) +
+        (item.date ? `<span class="date">${escapeHtml(item.date)}</span>` : "");
+      return a;
+    }
+
+    // Accordion: opening a section collapses the others.
+    function toggleSection(wrap) {
+      const wasCollapsed = wrap.classList.contains("collapsed");
+      navEl
+        .querySelectorAll(".nav-section")
+        .forEach((s) => s.classList.add("collapsed"));
+      if (wasCollapsed) wrap.classList.remove("collapsed");
+    }
+
+    function updateActive(filename) {
+      let activeSection = null;
+      for (const link of navEl.querySelectorAll(".nav-item")) {
+        const isActive = link.dataset.filename === filename;
+        link.classList.toggle("active", isActive);
+        if (isActive) activeSection = link.closest(".nav-section");
+      }
+      if (activeSection) {
+        navEl
+          .querySelectorAll(".nav-section")
+          .forEach((s) => s.classList.add("collapsed"));
+        activeSection.classList.remove("collapsed");
       }
     }
 
@@ -271,7 +370,8 @@
           '<p class="placeholder">Pick a tutorial from the sidebar.</p>';
         return;
       }
-      const res = await fetch("./" + encodeURIComponent(filename), { cache: "no-store" });
+      const url = "./" + filename.split("/").map(encodeURIComponent).join("/");
+      const res = await fetch(url, { cache: "no-store" });
       if (!res.ok) {
         contentEl.innerHTML = `<p class="placeholder">Could not load ${escapeHtml(filename)}</p>`;
         return;
@@ -281,9 +381,7 @@
       const html = renderMeta(fm) + marked.parse(body);
       contentEl.innerHTML = html;
       window.scrollTo(0, 0);
-      for (const link of navEl.querySelectorAll(".nav-item")) {
-        link.classList.toggle("active", link.dataset.filename === filename);
-      }
+      updateActive(filename);
     }
 
     function currentFile() {
