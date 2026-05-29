@@ -157,7 +157,10 @@ def serve() -> None:
     print(f"📚 Serving {SCRIPT_DIR}")
     print(f"🌐 Open:  http://localhost:{PORT}/")
     print("   (Ctrl+C to stop)")
-    with http.server.HTTPServer(("127.0.0.1", PORT), handler_cls) as httpd:
+    # ThreadingHTTPServer: handle requests concurrently. The single-threaded
+    # HTTPServer blocks on one (keep-alive) connection at a time, which makes
+    # browsers appear to "load forever".
+    with http.server.ThreadingHTTPServer(("127.0.0.1", PORT), handler_cls) as httpd:
         try:
             httpd.serve_forever()
         except KeyboardInterrupt:
