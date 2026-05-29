@@ -27,7 +27,7 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 COURSES_DIR = SCRIPT_DIR / "courses"
 MANIFEST = SCRIPT_DIR / "manifest.json"
 PORT = 8765
-SKIP_FILES = {"learner_profile.md", "MEMORY.md", "README.md"}
+SKIP_FILES = {"learner_profile.md", "MEMORY.md", "README.md", "CLAUDE.md"}
 
 # Small words kept lowercase when prettifying a subject folder name.
 _SMALL_WORDS = {"and", "or", "of", "the", "to", "a", "an", "in", "on", "for"}
